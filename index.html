@@ -1,16 +1,266 @@
 <!DOCTYPE HTML>
 <html>
-
   <head>
-    <title>Main Page - Web Page</title>
-    <!-- just for the testing -->
+    <title>Bitmap Font Generator</title>
     <meta charset="UTF-8">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7900132329812889"
-     crossorigin="anonymous"></script>
+    
+    <style>
+      input[type="color"] {
+        position: relative;
+        z-index: 10;
+      }
+    </style>
   </head>
   <body>
+    <!-- starts here -->
+    <!-- <div class="container" id="main_container"> -->
+    <form class="container" id="setting_container">
+      <!-- font size input -->
+      <label for="font_size_input">Enter the font size : </label>
+      <input name="font_size_input" id="font_size_input" type="number"><br>
+      
+      <!-- font family input -->
+      <label for="font_family_input">Enter the font family : </label>
+      <input name="font_family_input" id="font_family_input"><br>
+      
+      <!-- font color input -->
+      <label for="font_color_input">Enter the font color : </label>
+      <!-- <input type="color" value="#000000"><br> -->
+      <input name="font_color_input" id="font_color_input"><br>
+      
+      <!-- font weight input -->
+      <label for="font_weight_input">Enter the font weight : </label>
+      <select name="font_weight_input" id="font_weight_input">
+        <option value="">-- Nothing --</option>
+        <option value="bold">Bold</option>
+        <option value="italic">Italic</option>
+        <option value="bold italic">Bold Italic</option>
+      </select>
+      
+      <!-- border -->
+      <label for="show_border">Show Border ? : </label>
+      <select name="show_border" id="show_border_input">
+        <option value="show">YES</option>
+        <option value="dshow">NO</option>
+      </select>
+      
+      <!-- full and half -->
+      <label for="full_half">Full / Half Grid ? :</label>
+      <select name="full_half" id="full_half_input">
+        <option value="full">Show Full Grid</option>
+        <option value="half">Show Half Grid</option>
+      </select>
+      
+      <button id="default_setting" class="button">Default Bitmap Font</button>
+      <button id="generate_setting" class="button">Generate Bitmap Font</button>
+    </form>
+    
+    
+    <canvas id="canvas"></canvas><br><br>
+    
+    <button id="save_button">Download / Save Image</button>
+      
+    </div>
+    
+    <!-- script for generate inputs -->
+    <script>
+      // these are the default settings for generating the font
+      let font_size = 24;
+      let font_family = "consolas";
+      let font_color = "black";
+      let font_weight = "";
+      let show_border = "dshow";
+    
+      // const font_color_input = document.getElementById ("font_color_input");
+      const font_family_input = document.getElementById ("font_family_input");
+      const font_size_input = document.getElementById ("font_size_input");
+      const font_weight_input = document.getElementById ("font_weight_input");
+      const show_border_input = document.getElementById ("show_border_input");
+      const full_half_input = document.getElementById ("full_half_input");
+      
+      const setting_container = document.getElementById ("setting_container");
+      const generate_setting = document.getElementById ("generate_setting");
+      const default_setting = document.getElementById ("default_setting");
 
-    <h1>This is nothing just a root page, There may be content in here in the future, but for now there is nothing in here.</h1>
-    <h1>If you are google ad sense bot, please kindly check the contents in sub-folders. </h1>
+
+    </script>
+    
+    <!-- script -->
+    <script>
+      function drawGrid () {
+        
+        let index = 0;
+        
+        
+        document.fonts.ready.then (() => {
+        
+          for (let i = 0; i < 16; i++) {
+            for (let j = 0; j < 16; j++) {
+              // here
+              let col = (j * font_size);
+              let row = (i * font_size);
+              ctx.fillText (String.fromCharCode (index), col, row);
+              index++;
+            }
+          }
+        })
+      }
+      
+      function drawGrid_half () {
+        let index = 32;
+        
+        document.fonts.ready.then (() => {
+          for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 16; j++) {
+              let col = (j * font_size);
+              let row = (i * font_size);
+              
+              ctx.fillText (String.fromCharCode (index), col, row);
+              
+              index++;
+            }
+          }
+        })
+      }
+      
+      let Canvas_Width = font_size * 16;
+      let Canvas_Height = font_size * 16;
+      
+      const canvas = document.getElementById ("canvas");
+      const ctx = canvas.getContext ("2d", {alpha: true});
+      
+      canvas.width = Canvas_Width;
+      canvas.height = Canvas_Height;
+      
+      
+      function update_width_height (i_full_half) {
+        
+        // updating the canvas size
+        Canvas_Width = font_size_input.value * 16;
+        
+        if (i_full_half == "half") {
+        
+          Canvas_Height = font_size_input.value * 6;
+        } else {
+          Canvas_Height = font_size_input.value * 16;
+        
+        }
+        
+        canvas.width = Canvas_Width;
+        canvas.height = Canvas_Height;
+      }
+      
+      function update_setting () {
+        // updating the settings
+        if (show_border == "show") {
+        
+          canvas.style.border = "1px solid black";
+        } else {
+          canvas.style.border = "0px solid black";
+        }
+        
+        if (font_weight != "") {
+          ctx.font = `${font_weight} ${font_size}px ${font_family}`;
+        } else {
+          ctx.font = `${font_size}px ${font_family}`;
+        }
+        
+        ctx.fillStyle = font_color;
+      }
+      
+      
+      
+      
+      generate_setting.addEventListener ("click", function (e) {
+        e.preventDefault ();
+
+        // clearing the canvas
+        ctx.clearRect (0, 0, Canvas_Width, Canvas_Height);
+        
+        // setting the value
+        show_border = show_border_input.value;
+        font_size = font_size_input.value;
+        font_family = font_family_input.value;
+        font_weight = font_weight_input.value;
+        font_color = font_color_input.value;
+        
+        
+        
+        
+        // calling the grid
+        if (full_half_input.value == "full") {
+          update_width_height ("full");
+          update_setting ();
+          
+          ctx.textBaseline = "top";
+          drawGrid ();
+        } else {
+          update_width_height ("half");
+          update_setting ();
+          
+          ctx.textBaseline = "top";
+          
+          drawGrid_half ();
+        }
+        
+      })
+      
+      
+      <!-- listening for click in default button -->
+      default_setting.addEventListener ("click", function (e) {
+        e.preventDefault ();
+        
+        // clearing the canvas
+        ctx.clearRect (0, 0, Canvas_Width, Canvas_Height);
+        
+        // setting the value
+        let font_size = 24;
+        let font_family = "consolas";
+        let font_color = "black";
+        let font_weight = "";
+        let show_border = "dshow";
+        
+
+        
+        // calling the grid
+        if (full_half_input.value == "full") {
+          update_width_height ("full");
+          update_setting ();
+          
+          ctx.textBaseline = "top";
+          drawGrid ();
+        } else {
+          update_width_height ("half");
+          update_setting ();
+          
+          ctx.textBaseline = "top";
+          drawGrid_half ();
+        }
+      })
+
+    </script>
+    
+    
+    <!-- function to save the image -->
+    <script>
+      // this is for the saving
+      const save_button = document.getElementById ("save_button");
+      
+      save_button.addEventListener ("click", function (e) {
+        e.preventDefault ();
+        
+        canvas.toBlob ((blob) => {
+          const url = URL.createObjectURL (blob);
+          const link = document.createElement ('a');
+          link.href = url;
+          link.download = "bitmap-image.png";
+          link.click ();
+          
+          // cleanup the memory used by the url
+          URL.revokeObjectURL (url);
+          link.remove ();
+        }, 'image/png');
+      })
+    </script>
   </body>
 </html>
