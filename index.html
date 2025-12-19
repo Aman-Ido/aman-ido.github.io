@@ -1,32 +1,90 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <title>Bitmap Font Generator</title>
-    <meta charset="UTF-8">
+    <!-- title and icons -->
+    <title>ASCII Bitmap Font Generator</title>
+    <link rel="icon" href="./page_icon.jpg">
     
+    <!-- meta data so that search engines can find this page -->
+    <meta charset="UTF-8">
+    <meta name="title" content="Bitmap font generator | generate fonts | bitmap">
+    <meta name="description" content="free bitmap font generator using google fonts generate your font now!">
+    <meta name="author" content="Aman-Ido.github.io">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    
+    <!-- css styling -->
     <style>
-      input[type="color"] {
-        position: relative;
-        z-index: 10;
+
+      /* this is for the container - or all the boxes */
+      .container {
+        border: 1px solid black;
+        border-radius: 7px;
+        padding: 10px;
+        font-family: consolas;
+      }
+      
+      /* for all the inputs fields */
+      input {
+        margin: 10px;
+      }
+      
+      /* for all the buttons */
+      button {
+        font-size: 24px;
+      }
+      
+      /* only the generate bitmap font button */
+      #generate_setting {
+        padding: 10px;
+        border-radius: 7px;
+        border: 2px solid orange;
+      }
+      
+      /* only the default bitmap font button */
+      #default_setting {
+        padding: 10px;
+        border-radius: 7px;
+        border: 2px solid blue;
       }
     </style>
   </head>
   <body>
-    <!-- starts here -->
-    <!-- <div class="container" id="main_container"> -->
+    <!-- the header container - where you change the settings, like font family, size, color etcetra -->
     <form class="container" id="setting_container">
+      <!-- the header 'bitmap font' -->
+      <h3 style="text-align: center;">Bitmap Font <font color="red">Generator</font></h3>
+      
+      <hr> <!-- line -->
+      
+      <!-- prompt / info -->
+      <h6 style="border: 1px solid blue;border-radius: 7px;"><i><font color="red">
+        If you want to add google fonts, <font color="blue">(e.g. <u>follow the placeholder in the textarea or</u>)</font><a href="help_page.html" target="_blank">Go to Help Page</a>
+      </font> paste the link here: 
+      
+      <!-- text area with informative placeholder value -->
+      <textarea id="link_input" placeholder='<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap" rel="stylesheet">' 
+      rows="3" cols="100"></textarea>
+      
+      <!-- this button will set the google font / download the google font -->
+      <button id="google_font_button">Set the google font</button></i></h6>
+      
+      <hr> <!-- line -->
+      
       <!-- font size input -->
       <label for="font_size_input">Enter the font size : </label>
-      <input name="font_size_input" id="font_size_input" type="number"><br>
+      <input name="font_size_input" id="font_size_input" type="number" placeholder="24"><br>
       
       <!-- font family input -->
       <label for="font_family_input">Enter the font family : </label>
-      <input name="font_family_input" id="font_family_input"><br>
+      <input name="font_family_input" id="font_family_input" placeholder="consolas"><br>
       
       <!-- font color input -->
       <label for="font_color_input">Enter the font color : </label>
-      <!-- <input type="color" value="#000000"><br> -->
-      <input name="font_color_input" id="font_color_input"><br>
+      <input name="font_color_input" id="font_color_input" placeholder="blue"><br>
       
       <!-- font weight input -->
       <label for="font_weight_input">Enter the font weight : </label>
@@ -35,34 +93,41 @@
         <option value="bold">Bold</option>
         <option value="italic">Italic</option>
         <option value="bold italic">Bold Italic</option>
-      </select>
+      </select> <br> <br>
       
       <!-- border -->
       <label for="show_border">Show Border ? : </label>
       <select name="show_border" id="show_border_input">
         <option value="show">YES</option>
         <option value="dshow">NO</option>
-      </select>
+      </select> <br> <br>
       
       <!-- full and half -->
       <label for="full_half">Full / Half Grid ? :</label>
       <select name="full_half" id="full_half_input">
-        <option value="full">Show Full Grid</option>
-        <option value="half">Show Half Grid</option>
-      </select>
+        <option value="full">Show Full Grid (16x16)</option>
+        <option value="half">Show Half Grid (16x8)</option>
+      </select> <br> <br>
       
-      <button id="default_setting" class="button">Default Bitmap Font</button>
-      <button id="generate_setting" class="button">Generate Bitmap Font</button>
+      <!-- default = generate with default settings -->
+      <button id="default_setting" class="button">Default Bitmap Font</button> <br> <br><br>
+      <!-- generate = generate from the inputted values -->
+      <button id="generate_setting" class="button">Generate Bitmap Font</button> <br><i>Press twice if you are using google fonts</i>
     </form>
     
+    <br><br>
     
+    <!-- this is for the grid drawing -->
     <canvas id="canvas"></canvas><br><br>
     
+    <br><br><hr>
+    
+    <!-- this button will save a png image - with alpha channel in your default download folder -->
     <button id="save_button">Download / Save Image</button>
       
     </div>
     
-    <!-- script for generate inputs -->
+    <!-- javascript to get the elements by their id -->
     <script>
       // these are the default settings for generating the font
       let font_size = 24;
@@ -71,18 +136,24 @@
       let font_weight = "";
       let show_border = "dshow";
     
-      // const font_color_input = document.getElementById ("font_color_input");
+      const font_color_input = document.getElementById ("font_color_input");
       const font_family_input = document.getElementById ("font_family_input");
       const font_size_input = document.getElementById ("font_size_input");
       const font_weight_input = document.getElementById ("font_weight_input");
       const show_border_input = document.getElementById ("show_border_input");
       const full_half_input = document.getElementById ("full_half_input");
       
+      const link_input = document.getElementById ("link_input");
+      
       const setting_container = document.getElementById ("setting_container");
       const generate_setting = document.getElementById ("generate_setting");
       const default_setting = document.getElementById ("default_setting");
-
-
+      
+      document.getElementById("google_font_button").addEventListener ("click", (e) => {
+        e.preventDefault ();
+        const fragment = document.createRange().createContextualFragment(link_input.value);
+        document.head.append (fragment);
+      })
     </script>
     
     <!-- script -->
@@ -122,6 +193,7 @@
           }
         })
       }
+     
       
       let Canvas_Width = font_size * 16;
       let Canvas_Height = font_size * 16;
@@ -136,13 +208,13 @@
       function update_width_height (i_full_half) {
         
         // updating the canvas size
-        Canvas_Width = font_size_input.value * 16;
+        Canvas_Width = font_size * 16;
         
         if (i_full_half == "half") {
         
-          Canvas_Height = font_size_input.value * 6;
+          Canvas_Height = font_size  * 6;
         } else {
-          Canvas_Height = font_size_input.value * 16;
+          Canvas_Height = font_size * 16;
         
         }
         
@@ -173,7 +245,9 @@
       
       generate_setting.addEventListener ("click", function (e) {
         e.preventDefault ();
-
+        
+        
+        
         // clearing the canvas
         ctx.clearRect (0, 0, Canvas_Width, Canvas_Height);
         
@@ -203,6 +277,8 @@
           drawGrid_half ();
         }
         
+        
+        window.scrollTo (0, document.body.scrollHeight);
       })
       
       
@@ -210,15 +286,17 @@
       default_setting.addEventListener ("click", function (e) {
         e.preventDefault ();
         
+        
+        
         // clearing the canvas
         ctx.clearRect (0, 0, Canvas_Width, Canvas_Height);
         
         // setting the value
-        let font_size = 24;
-        let font_family = "consolas";
-        let font_color = "black";
-        let font_weight = "";
-        let show_border = "dshow";
+        font_size = 24;
+        font_family = "consolas";
+        font_color = "black";
+        font_weight = "";
+        show_border = "dshow";
         
 
         
@@ -236,6 +314,7 @@
           ctx.textBaseline = "top";
           drawGrid_half ();
         }
+        window.scrollTo (0, document.body.scrollHeight);
       })
 
     </script>
